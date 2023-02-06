@@ -1,0 +1,117 @@
+/*
+    metadata_assistant.css
+
+    Created by Alezia Kurdis, February 4th, 2023.
+    Copyright 2023 Overte e.V.
+    
+    Distributed under the Apache License, Version 2.0.
+    See the accompanying file LICENSE or http://www.apache.org/licenses/LICENSE-2.0.html
+*/
+
+@font-face {
+    font-family: FiraSans-SemiBold;
+    src: url(FiraSans-SemiBold.ttf);
+}
+
+@font-face {
+    font-family: FiraSans-Regular;
+    src: url(FiraSans-Regular.ttf);
+}
+
+h1 {
+    font-family: FiraSans-SemiBold;
+	font-size: 24px;
+	color: #CFB538;
+	text-decoration: none;
+	font-style: normal;
+	font-variant: normal;
+	text-transform: none;
+}
+
+font.explain {
+	font-family: FiraSans-Regular;
+	font-size: 10px;
+	color: #CFB538;
+	text-decoration: none;
+	font-style:italic;
+	font-variant: normal;
+	text-transform: none;
+}
+
+input {
+	font-family: FiraSans-Regular;
+	font-size: 12px;
+	color: #000000;
+	text-decoration: none;
+	font-style: normal;
+	font-variant: normal;
+	text-transform: none;
+}
+
+select {
+	font-family: FiraSans-Regular;
+	font-size: 12px;
+	color: #000000;
+	text-decoration: none;
+	font-style: normal;
+	font-variant: normal;
+	text-transform: none;
+}
+
+textarea {
+	width: 100%;
+	font-family: FiraSans-Regular;
+	font-size: 12px;
+	color: #000000;
+	text-decoration: none;
+	font-style: normal;
+	font-variant: normal;
+	text-transform: none;
+}
+
+textarea.output {
+	background: #ffff66;
+	width: 100%;
+	font-family: FiraSans-SemiBold;
+	font-size: 12px;
+	color: #000000;
+	text-decoration: none;
+	font-style: normal;
+	font-variant: normal;
+	text-transform: none;
+}
+
+sup {
+	color: #ff0000;
+}
+
+body {
+	background: #3E415E;
+	font-family: FiraSans-SemiBold;
+	font-size: 12px;
+	color: #FFFFFF;
+	text-decoration: none;
+	font-style: normal;
+	font-variant: normal;
+	text-transform: none;
+}
+
+input[type="button"]:disabled {
+  color: #bbbbbb;
+}
+
+#errormessage {
+	font-family: FiraSans-SemiBold;
+	font-size: 13px;
+	color: #FF0000;
+    background: #ffff00;
+    width: 100%;
+    padding: 5px;
+    display: none;
+}
+
+#previewPicture {
+    margin: 5px;
+    height: 100px;
+    border: 2px solid #ffffff;
+}

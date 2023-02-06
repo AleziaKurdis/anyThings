@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<!--
+//  anyThings.html
+//
+//  Created by Alezia Kurdis, January 28th, 2023.
+//  Copyright 2023 Overte e.V.
+//
+//  Application to share content that can be directly used.
+//
+//  Distributed under the Apache License, Version 2.0.
+//  See the accompanying file LICENSE or http://www.apache.org/licenses/LICENSE-2.0.html
+-->
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <script src='jquery.min.js'></script>
+        <script src="metadata.js"></script>
+        <script>
+            //Defaults
+            var NUMBER_OF_RECORDS_PER_LOAD = 20;
+            var loadRecordsUpTo = NUMBER_OF_RECORDS_PER_LOAD;
+
+            var seachedFieldsFilter = ["name", "description", "keywords", "creator"];
+            var maturityFilter = ["everyone", "teen", "mature", "adult"];
+            var maturityType = ["everyone", "teen", "mature", "adult"];
+            var categoryFilter = ["ENTITIES_JSON", "MATERIAL_JSON", "APPLICATION", "SCRIPT", "AVATAR", "MODEL", "SERVERLESS_JSON"];
+            var previousSearch = "";
+            var channel = "overte.application.ak.anyThings";
+            
+            var itemType = ["ENTITIES_JSON", "MATERIAL_JSON", "APPLICATION", "SCRIPT", "AVATAR", "MODEL", "SERVERLESS_JSON"];
+            var PERSISTENCE_ORDERING_CYCLE = 24 * 3600 * 1000; //24 hours
+
+            function buildAndOrderMetadata() {
+                for (var i = 0; i < metadata.length; i++) {
+                        metadata[i].order = getSeededRandomForString(metadata[i].contentUrl);
+                    }
+                metadata.sort(sortOrder);
+                doSearch();
+            }
+
+            function sortOrder(a, b) {
+                var orderA = a.order.toUpperCase();
+                var orderB = b.order.toUpperCase();
+                if (orderA > orderB) {
+                    return 1;    
+                } else if (orderA < orderB) {
+                    return -1;
+                }
+                if (a.order > b.order) {
+                    return 1;    
+                } else if (a.order < b.order) {
+                    return -1;
+                }
+                return 0;
+            }
+
+            function getItemTypeProperties(type, url, itemID) {
+                var name;
+                var action;
+                switch(type) {
+                    case "ENTITIES_JSON":
+                        name = "Entities";
+                        action = "<button class='addToWorld' onclick='importEntitiesJson(" + '"' + url + '"' + ", " + '"' + itemID + '"' + ");'>Add to world</button>";
+                        break;
+                    case "MATERIAL_JSON":
+                        name = "Material";
+                        action = "<button class='addToWorld' onclick='createMaterialFromJson(" + '"' + url + '"' + ", " + '"' + itemID + '"' + ");'>Add to world</button>";
+                        break;
+                    case "APPLICATION":
+                        name = "Application";
+                        action = "<button class='install' onclick='install(" + '"' + url + '"' + ", " + '"' + itemID + '"' + ");'>Install</button>";
+                        break;
+                    case "SCRIPT":
+                        name = "Script";
+                        action = "<button class='copyUrl' onclick='copyUrl(" + '"' + url + '"' + ", " + '"' + itemID + '"' + ");'>Copy URL</button>";
+                        break;
+                    case "AVATAR":
+                        name = "Avatar";
+                        action = "<button class='wearAvatar' onclick='wearAvatar(" + '"' + url + '"' + ", " + '"' + itemID + '"' + ");'>Wear Avatar</button>";
+                        break;
+                    case "MODEL":
+                        name = "Model";
+                        action = "<button class='addToWorld' onclick='createModel(" + '"' + url + '"' + ", " + '"' + itemID + '"' + ");'>Add to world</button>";
+                        break;
+                    case "SERVERLESS_JSON":
+                        name = "Serverless Domain";
+                        action = "<button class='navigate' onclick='navigateToUrl(" + '"' + url + '"' + ", " + '"' + itemID + '"' + ");'>Visit alone</button>";
+                        break;
+                    default:
+                        name = "";
+                        action = "";
+                }
+                
+                return {"name": name, "action": action};
+            }
+
+            //Search
+            function doSearch() {
+                var keyword = document.getElementById("searchtextbox").value;
+                if (keyword === "") {
+                    document.getElementById("clear_search").style.display = "none";
+                    document.getElementById("searchFiltersBar").style.display = "none";
+                } else {
+                    if (document.getElementById("searchFiltersBar").style.display === "none") {
+                        seachedFieldsFilter = ["name", "description", "keywords", "creator"];
+                    }
+                    document.getElementById("clear_search").style.display = "block";
+                    document.getElementById("searchFiltersBar").style.display = "inline-block";
+                    displaySearchFieldsFilter();
+                }
+                if (previousSearch !== keyword) {
+                    loadRecordsUpTo = NUMBER_OF_RECORDS_PER_LOAD;
+                    document.getElementById("list").scrollTop = 0;
+                }
+                listBuilder(keyword, loadRecordsUpTo);
+                previousSearch = keyword;
+            }
+
+            function clearSearch() {
+                loadRecordsUpTo = NUMBER_OF_RECORDS_PER_LOAD;
+                document.getElementById("searchtextbox").value = "";
+                doSearch();
+            }
+
+            function filterSearchField(targeted) {
+                if (seachedFieldsFilter.indexOf(targeted) === -1) {
+                    seachedFieldsFilter.push(targeted);
+                } else {
+                    seachedFieldsFilter = removeElementFromArray(seachedFieldsFilter, targeted);
+                }
+                loadRecordsUpTo = NUMBER_OF_RECORDS_PER_LOAD;
+                displaySearchFieldsFilter();
+                doSearch();
+            }
+
+            function removeElementFromArray(arr, value) {
+                return arr.filter(function(ele){
+                    return ele !== value;
+                });
+            }
+
+           function displaySearchFieldsFilter() {
+                if (seachedFieldsFilter.indexOf("name") === -1) {
+                    document.getElementById("searchFilterName").className = "fieldsSearchFilterOff";
+                } else {
+                    document.getElementById("searchFilterName").className = "fieldsSearchFilterOn";
+                }
+
+                if (seachedFieldsFilter.indexOf("description") === -1) {
+                    document.getElementById("searchFilterDesc").className = "fieldsSearchFilterOff";
+                } else {
+                    document.getElementById("searchFilterDesc").className = "fieldsSearchFilterOn";
+                }
+                
+                if (seachedFieldsFilter.indexOf("keywords") === -1) {
+                    document.getElementById("searchFilterKeywords").className = "fieldsSearchFilterOff";
+                } else {
+                    document.getElementById("searchFilterKeywords").className = "fieldsSearchFilterOn";
+                }
+                
+                if (seachedFieldsFilter.indexOf("creator") === -1) {
+                    document.getElementById("searchFilterCreator").className = "fieldsSearchFilterOff";
+                } else {
+                    document.getElementById("searchFilterCreator").className = "fieldsSearchFilterOn";
+                }                
+            }
+
+            function filterMaturity(targeted){
+                if (maturityFilter.indexOf(targeted) === -1) {
+                    maturityFilter.push(targeted);
+                } else {
+                    maturityFilter = removeElementFromArray(maturityFilter, targeted);
+                }
+                loadRecordsUpTo = NUMBER_OF_RECORDS_PER_LOAD;
+                displayMaturityFilter();
+                doSearch();
+            }
+
+            function displayMaturityFilter() {
+                for (var i = 0; i < maturityType.length; i++) {
+                    if (maturityFilter.indexOf(maturityType[i]) === -1) {
+                        document.getElementById("maturityFilter"+ maturityType[i]).className = "maturityFilterOff";
+                    } else {
+                        document.getElementById("maturityFilter"+ maturityType[i]).className = "maturityFilterOn filter" + maturityType[i];
+                    }
+                }
+            }
+
+            function filterCategory(targeted) {
+                if (categoryFilter.indexOf(targeted) === -1) {
+                    categoryFilter.push(targeted);
+                } else {
+                    categoryFilter = removeElementFromArray(categoryFilter, targeted);
+                }
+                loadRecordsUpTo = NUMBER_OF_RECORDS_PER_LOAD;
+                displayCategoryFilter();
+                doSearch();
+            }
+
+            function displayCategoryFilter() {
+                for (var i = 0; i < itemType.length; i++) {
+                    if (categoryFilter.indexOf(itemType[i]) === -1) {
+                        document.getElementById("categoryFilter"+ itemType[i]).className = "categoryFilterOff";
+                    } else {
+                        document.getElementById("categoryFilter"+ itemType[i]).className = "categoryFilterOn filter" + itemType[i];
+                    }
+                }
+            }
+
+            function turnCategoryAllOnOff() {
+                if (categoryFilter.length === 0) {
+                    categoryFilter = ["ENTITIES_JSON", "MATERIAL_JSON", "APPLICATION", "SCRIPT", "AVATAR", "MODEL", "SERVERLESS_JSON"];
+                } else {
+                    categoryFilter = [];
+                }
+                loadRecordsUpTo = NUMBER_OF_RECORDS_PER_LOAD;
+                displayCategoryFilter();
+                doSearch();
+            }
+
+            //Running scripts 
+            var buttonList = [];
+
+            function requestRunningScriptData() {
+                var readyEvent = {
+                    "channel": channel,
+                    "action": "requestRunningScriptData"
+                };
+                EventBridge.emitWebEvent(JSON.stringify(readyEvent));
+            }
+
+            EventBridge.scriptEventReceived.connect(function(message){
+                //update the buttons
+                if (message.indexOf("RSL4ANYTHINGS:") !== -1){
+                    buttonList.forEach(function(item){
+                        var btn = "";
+                        if (message.indexOf(item.url) !== -1) {
+                            //Means already running
+                            btn = "<button class='uninstall' onclick='uninstall(" + '"' + item.url + '"' + ", " + '"' + item.id + '"' + ");'>Uninstall</button>";
+                        } else {
+                            //Means not already installed
+                            btn = "<button class='install' onclick='install(" + '"' + item.url + '"' + ", " + '"' + item.id + '"' + ");'>Install</button>";
+                        }
+
+                        document.getElementById(item.id).innerHTML = btn;
+                        document.getElementById("itemDetail-Action").innerHTML = btn;
+                    });
+                }
+            });
+
+            function install(script, btnId){
+                var btn = "<button class='processing' >Processing...</button>";
+                document.getElementById(btnId).innerHTML = btn;
+                document.getElementById("itemDetail-Action").innerHTML = btn;
+                
+                var readyEvent = {
+                    "channel": channel,
+                    "action": "installScript",
+                    "url": script
+                };
+                
+                EventBridge.emitWebEvent(JSON.stringify(readyEvent));
+                event.stopPropagation();
+            }
+
+            function uninstall(script, btnId){
+                var btn = "<button class='processing' >Processing...</button>";
+                document.getElementById(btnId).innerHTML = btn;
+                document.getElementById("itemDetail-Action").innerHTML = btn;
+                
+                var readyEvent = {
+                    "channel": channel,
+                    "action": "uninstallScript",
+                    "url": script
+                };
+                
+                EventBridge.emitWebEvent(JSON.stringify(readyEvent));
+                event.stopPropagation();
+            }
+            
+            function importEntitiesJson(url, btnId){
+                var readyEvent = {
+                    "channel": channel,
+                    "action": "importEntitiesJson",
+                    "url": url
+                };
+                
+                EventBridge.emitWebEvent(JSON.stringify(readyEvent));
+                event.stopPropagation();
+            }
+            function createMaterialFromJson(url, btnId){
+                var readyEvent = {
+                    "channel": channel,
+                    "action": "createMaterialFromJson",
+                    "url": url
+                };
+                
+                EventBridge.emitWebEvent(JSON.stringify(readyEvent));
+                event.stopPropagation();
+            }
+            
+            function copyUrl(url, btnId){
+                copyToClipboard(url);
+                event.stopPropagation();
+            }
+            
+            function wearAvatar(url, btnId){
+                var readyEvent = {
+                    "channel": channel,
+                    "action": "wearAvatar",
+                    "url": url
+                };
+                
+                EventBridge.emitWebEvent(JSON.stringify(readyEvent));
+                event.stopPropagation();
+            }
+            
+            function createModel(url, btnId){
+                var readyEvent = {
+                    "channel": channel,
+                    "action": "createModel",
+                    "url": url
+                };
+                
+                EventBridge.emitWebEvent(JSON.stringify(readyEvent));
+                event.stopPropagation();
+            }
+            
+            function navigateToUrl(url, btnId){
+                var readyEvent = {
+                    "channel": channel,
+                    "action": "navigateToUrl",
+                    "url": url
+                };
+                
+                EventBridge.emitWebEvent(JSON.stringify(readyEvent));
+                event.stopPropagation();
+            }
+            
+            function copyToClipboard(data) {
+				var $temp = $("<input>");
+				$("body").append($temp);
+				$temp.val(data).select();
+				document.execCommand("copy");
+				$temp.remove();
+			}
+            
+            function selfUninstall() {
+                var readyEvent = {
+                    "channel": channel,
+                    "action": "selfUninstall"
+                };
+                
+                EventBridge.emitWebEvent(JSON.stringify(readyEvent));
+            }
+            //####### seed random library ################
+            var seed = 75;
+
+            function seededRandom(max, min) {
+                max = max || 1;
+                min = min || 0;
+                seed = (seed * 9301 + 49297) % 233280;
+                var rnd = seed / 233280;
+                return min + rnd * (max - min);
+            }
+
+            function getStringScore(str) {
+                var score = 0;
+                for (var j = 0; j < str.length; j++){
+                    score += str.charAt(j).charCodeAt(0) + 1;
+                }
+                return score;
+            }
+
+            function getSeededRandomForString(str) {
+                var score = getStringScore(str);
+                var d = new Date();
+                var n = d.getTime();
+                var currentSeed = Math.floor(n / PERSISTENCE_ORDERING_CYCLE);
+                seed = score * currentSeed;
+                return zeroPad(Math.floor(seededRandom() * 100000),5);
+            }
+            
+            function zeroPad(num, places) {
+                var zero = places - num.toString().length + 1;
+                return Array(+(zero > 0 && zero)).join("0") + num;
+            }
+            //####### END of seed random library ################
+        </script>
+        <link href="css/styles.css" rel="stylesheet">
+    </head>
+    <body>
+        <div id="header">
+            <img src="css/main_banner.png"><br>
+            <div id="search_container">
+                <input id="searchtextbox" maxlength="40" placeholder = "Search..." onkeyup = "doSearch();">
+                <span id="clear_search" onclick='clearSearch();'>&#11199;</span>
+            </div>
+            <div id = "filtersTop">
+                <div id="searchFiltersBarSuperContainer">
+                    <div id="searchFiltersBar">
+                        <button title="Name" class='fieldsSearchFilterOn' id='searchFilterName' onClick = 'filterSearchField("name");'>NAME</button>
+                        <button title="Description" class='fieldsSearchFilterOn' id='searchFilterDesc' onClick = 'filterSearchField("description");'>DESC.</button>
+                        <button title="Keywords" class='fieldsSearchFilterOn' id='searchFilterKeywords' onClick = 'filterSearchField("keywords");'>TAGS</button>
+                        <button title="Creator" class='fieldsSearchFilterOn' id='searchFilterCreator' onClick = 'filterSearchField("creator");'>CREATOR</button>
+                    </div>
+                </div>
+                <div id="maturityFiltersBar">
+                    <button title="Adult" class='maturityFilterOn filteradult' id='maturityFilteradult' onClick = 'filterMaturity("adult");'>A</button>
+                    <button title="Mature" class='maturityFilterOn filtermature' id='maturityFiltermature' onClick = 'filterMaturity("mature");'>M</button>
+                    <button title="Teen" class='maturityFilterOn filterteen' id='maturityFilterteen' onClick = 'filterMaturity("teen");'>T</button>
+                    <button title="Everyone" class='maturityFilterOn filtereveryone' id='maturityFiltereveryone' onClick = 'filterMaturity("everyone");'>E</button>
+                </div>
+            </div>
+            <div id="categoryFiltersBar">
+                <button title="Entities" class='categoryFilterOn filterENTITIES_JSON' id='categoryFilterENTITIES_JSON' onClick = 'filterCategory("ENTITIES_JSON");'>ENTITIES</button>
+                <button title="Models" class='categoryFilterOn filterMODEL' id='categoryFilterMODEL' onClick = 'filterCategory("MODEL");'>MODELS</button>
+                <button title="Materials" class='categoryFilterOn filterMATERIAL_JSON' id='categoryFilterMATERIAL_JSON' onClick = 'filterCategory("MATERIAL_JSON");'>MATERIALS</button>
+                <button title="Avatars" class='categoryFilterOn filterAVATAR' id='categoryFilterAVATAR' onClick = 'filterCategory("AVATAR");'>AVATARS</button>
+                <button title="Applications" class='categoryFilterOn filterAPPLICATION' id='categoryFilterAPPLICATION' onClick = 'filterCategory("APPLICATION");'>APPLICATIONS</button>
+                <button title="Scripts" class='categoryFilterOn filterSCRIPT' id='categoryFilterSCRIPT' onClick = 'filterCategory("SCRIPT");'>SCRIPTS</button>
+                <button title="Serverless" class='categoryFilterOn filterSERVERLESS_JSON' id='categoryFilterSERVERLESS_JSON' onClick = 'filterCategory("SERVERLESS_JSON");'>SERVERLESS</button>
+                <button title="all" class='categoryFilterOff' id='categoryFilterALL' onClick = 'turnCategoryAllOnOff();'>ALL</button>
+            </div>
+        </div>
+        <div id="list">
+            <div id="cards"></div>
+            <div id="sidewalk"></div>
+        </div>
+        <div id="footer">
+            <div id = "footerNotice">
+            Want to contribute and add your own products?<br>
+            See this repository: <font class="blue">github.com/AleziaKurdis/anyThings</font>
+            </div>
+            <div id = "footerUninstall">
+                <button id = "selfUninstall" onClick = "selfUninstall();">Uninstall this app</button>
+            </div>
+        </div>
+        <div id="itemDetail" class="overlay" onclick="closeDetail();" >
+            <div id="itemDetail-Picture-Container">
+                <img id="itemDetail-Picture" draggable="false">
+            </div>
+            <div id="itemDetail-Category"></div>
+            <div id="itemDetail-Name"></div>
+            <div id="itemDetail-Creator"></div>
+            <table width='100%'>
+                <tr valign='top'>
+                    <td width='68%'>
+                        <div id="itemDetail-Creator"></div>
+                        <div id="itemDetail-Description"></div></td>
+                    <td width='3%'>&nbsp;</td>
+                    <td id="" width='29%'>
+                        <div id="itemDetail-Action"></div>
+                        <div class="itemDetail-Text">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>LICENSE:</div>
+                        <div id="itemDetail-License"></div>
+                        <div id="itemDetail-Notice"></div>
+                        <div class="itemDetail-Text">RATING:</div>
+                        <div id="itemDetail-Maturity"></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <script>
+
+            var pageContent = "";
+
+            function displayCard(item, itemNo) {
+                var picture = item.pictureUrl;
+                if (item.pictureUrl === "") {
+                    picture = "css/placeholder.jpg";
+                }
+                var typeProperties = getItemTypeProperties(item.type, item.contentUrl, window.btoa(item.contentUrl));
+                var btn = typeProperties.action;
+                var categoryName = typeProperties.name;
+                if (item.type === "SCRIPT") {
+                    categoryName = item.scriptType;
+                }
+                if (item.type === "APPLICATION") {
+                    var btndata = {
+                        "url": item.contentUrl,
+                        "id": window.btoa(item.contentUrl)
+                        };
+                    buttonList.push(btndata);
+                }
+                var description = item.description;
+                if (description.length > 180) {
+                    description = description.substr(0, 175) + '... <font class = "more">More</font>';
+                }
+                pageContent = pageContent + "<div class='list_background'></div>";
+                pageContent = pageContent + "<div class='card'>";
+                pageContent = pageContent + "<a name = '" + window.btoa(item.contentUrl) + "'>";
+                pageContent = pageContent + "<div class = 'itemType " + item.type + "'  onClick='displayDetails(" + itemNo + ");'>" + categoryName + "</div>";
+                pageContent = pageContent + "<table class='item'><tr class='item'>";
+                pageContent = pageContent + "<td class='item' style='width: 76px;'>";
+                pageContent = pageContent + "<img class='pictureContainer' src='" + picture + "' onClick='displayDetails(" + itemNo + ");'></td>";
+                pageContent = pageContent + "<td class='item'><div style='width: 100%; text-align: left; padding: 0px;'>";
+                pageContent = pageContent + "<font class='appname' onClick='displayDetails(" + itemNo + ");'>" + item.name + "<br></font>";
+                pageContent = pageContent + "<font class = 'appdesc' onClick='displayDetails(" + itemNo + ");'>" + description + "<br><font class='cardBy'>By " + item.by + "</font></font></div>";
+                pageContent = pageContent + "<div id = '" + window.btoa(item.contentUrl) + "' align='right'>" + btn + "</div></td>";
+                pageContent = pageContent + "</tr></table>";
+                pageContent = pageContent + "</div>";
+            }
+
+            function listBuilder(searchKeyword, upTo) {
+                buttonList = [];
+                var counterDisp = 0;
+                var index = 0;
+                var lowItem = "";
+                var lowDesc = "";
+                var lowKeywords = "";
+                var lowCreator = "";
+                pageContent = "";
+                var loadMoreRequired = false;
+                
+                for (index = 0; index < metadata.length; index++) {
+                    lowItem = metadata[index].name.toLowerCase();
+                    lowDesc = metadata[index].description.toLowerCase();
+                    lowKeywords = metadata[index].keywords.toLowerCase();
+                    lowCreator = metadata[index].by.toLowerCase();
+                    var query;
+                    if (searchKeyword === "") {
+                        query = true;
+                    } else {
+                        query = ((seachedFieldsFilter.indexOf("name") !== -1 && lowItem.indexOf(searchKeyword.toLowerCase()) !== -1)||
+                            (seachedFieldsFilter.indexOf("description") !== -1 && lowDesc.indexOf(searchKeyword.toLowerCase()) !== -1)||
+                            (seachedFieldsFilter.indexOf("creator") !== -1 && lowCreator.indexOf(searchKeyword.toLowerCase()) !== -1)||
+                            (seachedFieldsFilter.indexOf("keywords") !== -1 && lowKeywords.indexOf(searchKeyword.toLowerCase()) !== -1));
+                    }
+                    
+                    var isVisiblePerCategoryFitler = false;
+                    if (categoryFilter.length > 0) {
+                        for (var cat = 0; cat < categoryFilter.length; cat++) {
+                            if (metadata[index].type === categoryFilter[cat]) {
+                                isVisiblePerCategoryFitler = true;
+                            }
+                        }
+                    }
+                    
+                    var isVisiblePerMaturityFitler = false;
+                    if (maturityFilter.length > 0) {
+                        for (var cat = 0; cat < maturityFilter.length; cat++) {
+                            if (metadata[index].maturityLevel === maturityFilter[cat]) {
+                                isVisiblePerMaturityFitler = true;
+                            }
+                        }
+                    }
+                    
+                    if (query && metadata[index].isActive == true && isVisiblePerCategoryFitler && isVisiblePerMaturityFitler) {
+
+                        displayCard(metadata[index], index);
+                        counterDisp = counterDisp + 1;
+
+                        if (counterDisp >= upTo) {
+                            loadMoreRequired = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (loadMoreRequired) {
+                    pageContent = pageContent + "<div class='list_background'><button id='load_more' onclick = 'loadMore();'>LOAD MORE...</button></div>";
+                } else {
+                    pageContent = pageContent + "<div class='list_background'></div>";
+                }
+                
+                if (counterDisp > 0 ) {
+                    document.getElementById("cards").innerHTML = pageContent;
+                } else {
+                    document.getElementById("cards").innerHTML = "<div align='center'><font class='noresult'><br><br><br><br>Sorry, no result found.<br><br><br><br><br><br></font></div>";
+                }
+                requestRunningScriptData();
+            }
+
+            function loadMore() {
+                loadRecordsUpTo = loadRecordsUpTo + NUMBER_OF_RECORDS_PER_LOAD;
+                doSearch();
+            }
+
+            function displayDetails(itemNo) {
+                document.getElementById("itemDetail-Picture").src = "";
+                if (metadata[itemNo].pictureUrl === "") {
+                    document.getElementById("itemDetail-Picture").src = "css/placeholder.jpg";
+                } else {
+                    document.getElementById("itemDetail-Picture").src = metadata[itemNo].pictureUrl;
+                }
+                document.getElementById("itemDetail-Name").innerHTML = metadata[itemNo].name;
+                document.getElementById("itemDetail-Creator").innerHTML = "By " + metadata[itemNo].by;
+                document.getElementById("itemDetail-Description").innerHTML = metadata[itemNo].description;
+                
+                var typeProperties = getItemTypeProperties(metadata[itemNo].type, metadata[itemNo].contentUrl, window.btoa(metadata[itemNo].contentUrl));
+                var categoryName = typeProperties.name;
+                var btn = typeProperties.action;
+                if (metadata[itemNo].type === "APPLICATION") {
+                    btn = document.getElementById(window.btoa(metadata[itemNo].contentUrl)).innerHTML;
+                }
+                if (metadata[itemNo].type === "SCRIPT") {
+                    categoryName = metadata[itemNo].scriptType;
+                }
+                document.getElementById("itemDetail-Category").innerHTML = "<div class = 'itemType " + metadata[itemNo].type + "'>" + categoryName + "</div>";
+                document.getElementById("itemDetail-Action").innerHTML = btn;
+                document.getElementById("itemDetail-Maturity").innerHTML = metadata[itemNo].maturityLevel.toUpperCase();
+                document.getElementById("itemDetail-Maturity").className = "maturityFilterOn filter" + metadata[itemNo].maturityLevel;
+                document.getElementById("itemDetail-License").innerHTML =  metadata[itemNo].license;
+                var notice = "<br>";
+                if (metadata[itemNo].useServerEntityScript) {
+                    notice = "<br>NOTE: This product contains 'Server Entity Script', you might have to add an entry in the whitelist of your domain server to allow it to run.<br><br>";
+                }
+                document.getElementById("itemDetail-Notice").innerHTML = notice;
+                
+                document.getElementById("itemDetail").style.width = "100%";
+            }
+
+            function closeDetail() {
+                document.getElementById("itemDetail").style.width = "0%";
+            }
+
+            document.getElementById("searchFiltersBar").style.display = "none";
+            
+            buildAndOrderMetadata();
+        </script>
+    </body>
+</html>

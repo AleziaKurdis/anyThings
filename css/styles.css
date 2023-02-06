@@ -1,0 +1,761 @@
+/*
+    styles.css
+
+//  Created by Alezia Kurdis, January 28th, 2023.
+//  Copyright 2023 Overte e.V.
+
+    Distributed under the Apache License, Version 2.0.
+    See the accompanying file LICENSE or http://www.apache.org/licenses/LICENSE-2.0.html
+*/
+
+@font-face {
+    font-family: FiraSans-SemiBold;
+    src: url(FiraSans-SemiBold.ttf);
+}
+
+@font-face {
+    font-family: FiraSans-Regular;
+    src: url(FiraSans-Regular.ttf);
+}
+
+html {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    background-color: #000000;
+    font-family: FiraSans-SemiBold, sans-serif;
+    font-size: 14px;
+    color: #FFFFFF;
+    text-decoration: none;
+    font-style: normal;
+    font-variant: normal;
+    text-transform: none;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+table.item {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+tr.item {
+    vertical-align: top;
+}
+
+td.item {
+    vertical-align: top;
+    text-align: left;
+    padding: 3px;
+}
+
+font.mainTitle {
+    font-family: FiraSans-SemiBold, sans-serif;
+    font-size: 28px;
+    color: #ffffff;
+    text-decoration: none;
+    font-style: normal;
+    font-variant: normal;
+    text-transform: none;
+}
+
+.appdesc a {
+    color: #00bbff;
+}
+
+font.appname {
+    font-family: FiraSans-SemiBold, sans-serif;
+    font-size: 18px;
+    color: #ffffff;
+    text-decoration: none;
+    font-style: normal;
+    font-variant: normal;
+    text-transform: none;
+    margin-bottom: 5px;
+    float: left;
+    clear: both;
+}
+
+font.appdesc {
+    font-family: FiraSans-Regular, sans-serif;
+    font-size: 14px;
+    color: #dddddd;
+    text-decoration: none;
+    font-style: normal;
+    font-variant: normal;
+    text-transform: none;
+    margin-bottom: 5px;
+    float: left;
+    clear: both;
+}
+
+font.noresult {
+    font-family: FiraSans-Regular, sans-serif;
+    font-size: 18px;
+    color: #aaaaaa;
+    font-weight: 500;
+    text-decoration: none;
+    font-style: normal;
+    font-variant: normal;
+    text-transform: none;
+}
+
+img.pictureContainer{
+    padding: 0px;
+    width: 76px;
+    height: auto;
+    border: 2px solid #ffffff;
+}
+
+button.install {
+    font-family: FiraSans-SemiBold, sans-serif;
+    background-color: #008CBA;
+    font-size: 16px;
+    color: #ffffff;
+    border-radius: 6px;
+    border: 2px solid #008CBA;
+    transition-duration: 0.3s;
+    float: right;
+    width: 130px;
+}
+
+button.install:hover {
+    background-color: #10afe3;
+    border: 2px solid #10afe3;
+}
+
+button.install:focus {
+    outline: none;
+}
+
+button.uninstall {
+    font-family: FiraSans-SemiBold, sans-serif;
+    background-color: #b34700;
+    font-size: 16px;
+    color: #ffffff;
+    border-radius: 6px;
+    border: 2px solid #b34700;
+    transition-duration: 0.3s;
+    float: right;
+    width: 130px;
+}
+
+button.uninstall:hover {
+    background-color: #e34c22; 
+    border: 2px solid #e34c22;
+}
+
+button.uninstall:focus {
+    outline: none;
+}
+
+button.addToWorld {
+    font-family: FiraSans-SemiBold, sans-serif;
+    background-color: #6667AB;
+    font-size: 16px;
+    color: #ffffff;
+    border-radius: 6px;
+    border: 2px solid #6667AB;
+    transition-duration: 0.3s;
+    float: right;
+    width: 130px;
+}
+
+button.addToWorld:hover {
+    background-color: #686ae3; 
+    border: 2px solid #686ae3;
+}
+
+button.addToWorld:focus {
+    outline: none;
+}
+
+button.copyUrl {
+    font-family: FiraSans-SemiBold, sans-serif;
+    background-color: #8c8c5f;
+    font-size: 16px;
+    color: #ffffff;
+    border-radius: 6px;
+    border: 2px solid #8c8c5f;
+    transition-duration: 0.3s;
+    float: right;
+    width: 130px;
+}
+
+button.copyUrl:hover {
+    background-color: #bfbf56; 
+    border: 2px solid #bfbf56;
+}
+
+button.copyUrl:focus {
+    outline: none;
+}
+
+button.wearAvatar {
+    font-family: FiraSans-SemiBold, sans-serif;
+    background-color: #3e818a;
+    font-size: 16px;
+    color: #ffffff;
+    border-radius: 6px;
+    border: 2px solid #3e818a;
+    transition-duration: 0.3s;
+    float: right;
+    width: 130px;
+}
+
+button.wearAvatar:hover {
+    background-color: #1aa9bd; 
+    border: 2px solid #1aa9bd;
+}
+
+button.wearAvatar:focus {
+    outline: none;
+}
+
+
+button.navigate {
+    font-family: FiraSans-SemiBold, sans-serif;
+    background-color: #3c8f44;
+    font-size: 16px;
+    color: #ffffff;
+    border-radius: 6px;
+    border: 2px solid #3c8f44;
+    transition-duration: 0.3s;
+    float: right;
+    width: 130px;
+}
+
+button.navigate:hover {
+    background-color: #16c426; 
+    border: 2px solid #16c426;
+}
+
+button.navigate:focus {
+    outline: none;
+}
+
+
+button.processing {
+    font-family: FiraSans-SemiBold, sans-serif;
+    background-color: #b59207;
+    font-size: 16px;
+    color: #ffffff;
+    border-radius: 6px;
+    border: 2px solid #b59207;
+    transition-duration: 0.3s;
+    float: right;
+    width: 130px;
+}
+
+button.processing:focus {
+    outline: none;
+}
+
+div.itemType {
+    font-family: FiraSans-Regular, sans-serif;
+    color: #ffffff;
+    font-size: 10px;
+    padding: 1px 4px 0px 4px;
+    border: solid #000000 0px;
+    text-decoration: none;
+    text-align: center;
+    float: left;
+    width: 98%;
+}
+
+div.ENTITIES_JSON {
+     background: #8d4fff;
+}
+
+div.MATERIAL_JSON {
+     background: #a81162;
+}
+
+div.MODEL {
+     background: #4860e8;
+}
+
+div.SERVERLESS_JSON {
+     background: #44c253;
+}
+
+div.APPLICATION {
+     background: #c23d29;
+}
+
+div.SCRIPT {
+     background: #a3a324;
+}
+
+div.AVATAR {
+     background: #1aa9bd;
+}
+
+#clear_search {
+    font-family: FiraSans-SemiBold, sans-serif;
+    font-size: 18px;
+    color: #999999;
+    display: none;
+}
+
+#searchtextbox{
+    font-family: FiraSans-Regular, sans-serif;
+    font-size: 14px;
+    color: #000000;
+    width: 93%;
+    text-decoration: none;
+    border: 0px;
+    outline-color: #bdbdbd;
+    background-color: #bdbdbd;
+    margin: 3px;
+}
+
+#searchtextbox:focus {
+    outline: none;
+}
+
+#search_container {
+    width: 95%;
+    margin-top: 3px;
+    margin-bottom: 2px;
+    padding: 1px 4px 1px 4px;
+    border: 0px;
+    border-radius: 6px;
+    background-color: #bdbdbd;
+    display: flex;
+}
+
+#filtersTop {
+    display: flex;
+    width: 91%;
+    text-align: right;
+}
+
+#searchFiltersBarSuperContainer {
+    width: 50%;
+    text-align: left;
+}
+
+#maturityFiltersBar {
+    width: 50%;
+    text-align: right;
+}
+
+button.fieldsSearchFilterOn {
+    font-family: FiraSans-Regular, sans-serif;
+    background: #ccb362;
+    color: #fcebb1;
+    font-size: 10px;
+    padding: 1px 4px 0px 4px;
+    border: solid #000000 1px;
+    text-decoration: none;
+    text-align: center;
+    margin: 3px 1px 0px 1px;
+}
+
+button.fieldsSearchFilterOn:hover {
+    border: solid #fcebb1 1px;
+}
+
+button.fieldsSearchFilterOn:focus {
+    outline: none;
+}
+
+button.fieldsSearchFilterOff {
+    font-family: FiraSans-Regular, sans-serif;
+    background: #333333;
+    color: #888888;
+    font-size: 10px;
+    padding: 1px 4px 0px 4px;
+    border: solid #000000 1px;
+    text-decoration: none;
+    text-align: center;
+    margin: 3px 1px 0px 1px;
+}
+
+button.fieldsSearchFilterOff:hover {
+    border: solid #888888 1px;
+}
+
+button.fieldsSearchFilterOff:focus {
+    outline: none;
+}
+
+#header {
+    width: 100%;
+    height: 13.5%;
+    background-color: #404040;
+    padding: 8px;
+    margin: 0px;
+}
+
+#list {
+    width: 100%;
+    height: 79.5%;
+    overflow-y: scroll;
+    display: flex;
+    background-color: #111111;
+    background-image: url("sidewalk.png");
+    background-repeat: repeat;
+    background-attachment: local;
+}
+
+#footer {
+    font-family: FiraSans-Regular, sans-serif;
+    font-size: 11px;
+    width: 100%;
+    height: 7%;
+    background-color: #404040;
+    padding: 6px 8px 6px;
+    margin: 0px;
+    display: flex;
+}
+
+#footerNotice {
+    width: 70%;
+    text-align: left;
+}
+
+#footerUninstall {
+    width: 20%;
+    text-align: right;
+    padding-top: 6px;
+}
+
+
+font.blue {
+    color: #00bbff;
+}
+
+font.more {
+    font-size: 10px;
+    color: #00bbff;
+}
+
+#cards {
+    width: 87%;
+    text-align: left;
+    background-color: #111111;
+    background-image: none;
+}
+
+#sidewalk {
+    width: 13%;
+}
+
+::-webkit-scrollbar {
+    width: 20px;
+    height: 10px;
+}
+::-webkit-scrollbar-track {
+    background-color: #2e2e2e;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #696969;
+    border: 2px solid #2e2e2e;
+    border-radius: 8px;
+}
+
+div.list_background {
+    width: 100%;
+    min-height: 14px;
+    background-color: #111111;
+    text-align: center;
+}
+
+#load_more {
+    font-family: FiraSans-SemiBold, sans-serif;
+    background-color: #545454;
+    font-size: 16px;
+    color: #ffffff;
+    border-radius: 6px;
+    border: 2px solid #545454;
+    transition-duration: 0.3s;
+    width: 130px;
+    margin-top: 4px;
+    margin-bottom: 8px;
+}
+
+#load_more:hover {
+    background-color: #9c9c9c; 
+    border: 2px solid #9c9c9c;
+}
+
+#load_more:focus {
+    outline: none;
+}
+
+div.card {
+    width: 100%;
+    background-color: #303030;
+    border: 0px;
+    border-radius: 6px;
+    box-shadow: 3px 3px 5px rgba(0,0,0,0.8);
+    margin: 0px;
+    text-align: center;
+    padding: 8px;
+}
+
+button.categoryFilterOn {
+    font-family: FiraSans-Regular, sans-serif;
+    font-size: 10px;
+    padding: 1px 4px 0px 4px;
+    border: solid #000000 1px;
+    text-decoration: none;
+    text-align: center;
+    margin: 3px 1px 0px 1px;
+}
+
+button.categoryFilterOn:hover {
+    border: solid #4fd0ff 1px;
+}
+
+button.categoryFilterOn:focus {
+    outline: none;
+}
+
+button.categoryFilterOff {
+    font-family: FiraSans-Regular, sans-serif;
+    background: #333333;
+    color: #888888;
+    font-size: 10px;
+    padding: 1px 4px 0px 4px;
+    border: solid #000000 1px;
+    text-decoration: none;
+    text-align: center;
+    margin: 3px 1px 0px 1px;
+}
+
+button.categoryFilterOff:hover {
+    border: solid #888888 1px;
+}
+
+button.categoryFilterOff:focus {
+    outline: none;
+}
+
+button.filterENTITIES_JSON {
+     background: #8d4fff;
+     color: #c09eff;
+}
+
+button.filterENTITIES_JSON:hover {
+    border: solid #c09eff 1px;
+}
+
+button.filterMATERIAL_JSON {
+     background: #a81162;
+     color: #ff99d0;
+}
+
+button.filterMATERIAL_JSON:hover {
+     border: solid #ff99d0 1px;
+}
+
+button.filterMODEL {
+     background: #4860e8;
+     color: #9eadff;
+}
+
+button.filterMODEL:hover {
+     border: solid #9eadff 1px;
+}
+
+button.filterSERVERLESS_JSON {
+     background: #44c253;
+     color: #9effaa;
+}
+
+button.filterSERVERLESS_JSON:hover {
+     border: solid #9effaa 1px;
+}
+
+button.filterAPPLICATION {
+     background: #c23d29;
+     color: #ff9585;
+}
+
+button.filterAPPLICATION:hover {
+     border: solid #ff9585 1px;
+}
+
+button.filterSCRIPT {
+     background: #a3a324;
+     color: #f2f279;
+}
+
+button.filterSCRIPT:hover {
+     border: solid #f2f279 1px;
+}
+
+button.filterAVATAR {
+     background: #1aa9bd;
+     color: #8ff1ff;
+}
+
+button.filterAVATAR:hover {
+     border: solid #8ff1ff 1px;
+}
+
+.maturityFilterOn {
+    font-family: FiraSans-Regular, sans-serif;
+    font-size: 10px;
+    padding: 1px 4px 0px 4px;
+    border: solid #000000 1px;
+    color: #ffffff;
+    text-decoration: none;
+    text-align: center;
+    margin: 3px 1px 0px 1px;
+}
+
+button.maturityFilterOn:hover {
+    border: solid #ffffff 1px;
+}
+
+button.maturityFilterOn:focus {
+    outline: none;
+}
+
+button.maturityFilterOff {
+    font-family: FiraSans-Regular, sans-serif;
+    background: #333333;
+    color: #888888;
+    font-size: 10px;
+    padding: 1px 4px 0px 4px;
+    border: solid #000000 1px;
+    text-decoration: none;
+    text-align: center;
+    margin: 3px 1px 0px 1px;
+}
+
+button.maturityFilterOff:hover {
+    border: solid #888888 1px;
+}
+
+button.maturityFilterOff:focus {
+    outline: none;
+}
+
+.filtereveryone {
+     background: #00b315;
+}
+
+.filterteen {
+     background: #cfc802;
+}
+
+.filtermature {
+     background: #e67e00;
+}
+
+.filteradult {
+     background: #d41200;
+}
+
+#selfUninstall {
+    font-family: FiraSans-SemiBold, sans-serif;
+    background-color: #222222;
+    font-size: 9px;
+    color: #cccccc;
+    border-radius: 3px;
+    border: 0px solid #000000;
+    transition-duration: 0.3s;
+    width: 100px;
+    padding: 3px;
+}
+
+#selfUninstall:hover {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+#selfUninstall:focus {
+    outline: none;
+}
+
+.overlay {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: rgba(0,0,0, 1);
+  overflow: hidden;
+  transition: 0.5s;
+}
+
+#itemDetail-Picture-Container {
+    text-align: center;
+}
+
+#itemDetail-Picture {
+    width: auto;
+    height: 270px;
+    object-fit: cover;
+    margin: 0px;
+}
+
+#itemDetail-Name {
+    text-align: center;
+    width: 95%;
+    font-size: 24px;
+    font-weight: 700;
+    color: #ffffff; 
+    padding: 15px;
+}
+
+#itemDetail-Description {
+    width: 95%;
+    font-size: 12px;
+    font-weight: 500;
+    color: #cccccc;
+    padding: 10px;
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+#itemDetail-Creator {
+    width: 100%;
+    font-size: 12px;
+    font-weight: 700;
+    color: #999999;
+    padding-left: 60px;
+    text-align: left;  
+}
+
+#itemDetail-Notice {
+    font-size: 10px;
+    color: #ffb300;
+    padding: 4px;
+    text-align: left;
+}
+
+#itemDetail-License {
+    font-family: FiraSans-Regular, sans-serif;
+    background-color: #70180a;
+    font-size: 10px;
+    padding: 1px 4px 0px 4px;
+    border: solid #000000 1px;
+    color: #ffffff;
+    text-decoration: none;
+    text-align: center;
+    margin: 3px 1px 0px 1px;
+}
+
+.itemDetail-Text {
+    font-size: 12px;
+    color: #999999;
+}
+
+.cardBy {
+    font-size: 10px;
+    color: #888888;
+}
