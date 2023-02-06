@@ -55,6 +55,7 @@
                     }
                     if (!running) {
                         ScriptDiscoveryService.loadScript(appScriptUrl, true, false, false, true, false);
+                        Window.displayAnnouncement("'AnyThings' application installed with succes.");
                         confirmation();
                     } else {
                         //print("Already running!");
