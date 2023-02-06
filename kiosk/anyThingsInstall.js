@@ -12,7 +12,7 @@
 (function() {
     var MAX_CLICKABLE_DISTANCE_M = 5;
     var appScriptUrl = "https://aleziakurdis.github.io/anyThings/app-anyThings.js";
-
+    var confirmationSound = SoundCache.getSound("https://aleziakurdis.github.io/anyThings/sounds/confirmation.mp3");
     // Constructor
     var _this = null;
 
@@ -21,6 +21,13 @@
         this.entityID = null;
     }
 
+    function confirmation() { //Play a confirmation sound
+        var injector = Audio.playSound(confirmationSound, {
+            "volume": 0.3,
+            "localOnly": true
+        });
+    }
+    
     // Entity methods
     clickableUI.prototype = {
         preload: function (id) {
@@ -48,6 +55,7 @@
                     }
                     if (!running) {
                         ScriptDiscoveryService.loadScript(appScriptUrl, true, false, false, true, false);
+                        confirmation();
                     } else {
                         //print("Already running!");
                     }
