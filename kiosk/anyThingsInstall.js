@@ -11,7 +11,7 @@
 //
 (function() {
     var MAX_CLICKABLE_DISTANCE_M = 5;
-    var appScriptUrl = "./app-anyThings.js";
+    var appScriptUrl = "https://aleziakurdis.github.io/anyThings/app-anyThings.js";
 
     // Constructor
     var _this = null;
