@@ -194,5 +194,18 @@ var metadata = [
         "by": "Alezia Kurdis",
         "license": "Apache 2.0",
         "maturityLevel": "everyone"
+    },
+    {
+        "isActive": true,
+        "name": "\"AnyThings\" application installer",
+        "description": "In-world \"AnyThings\" application installer and advertisement. User only have to click on it to get the \"AnyThings\" application installed. If you share content on \"AnyThings\", you may want to have this on your domain.",
+        "pictureUrl": "https://aleziakurdis.github.io/anyThings/kiosk/cover.jpg",
+        "contentUrl": "https://aleziakurdis.github.io/anyThings/kiosk/anyThingsKiosk.json",
+        "type": "ENTITIES_JSON",
+        "useServerEntityScript": false,
+        "keywords": "installer application content free kiosk stand",
+        "by": "Alezia Kurdis",
+        "license": "Apache 2.0",
+        "maturityLevel": "everyone"
     }
 ];
