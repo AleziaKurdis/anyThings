@@ -1,6 +1,4 @@
 <img src="css/logo.png">  
-  
-# anyThings  
 Application to distribute directly usable content.
  
 ## To add referrences to your content on "AnyThings"  
